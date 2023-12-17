@@ -11,11 +11,22 @@ const getCabins = async () => {
   return data;
 };
 
-const deleteCabin = async (id) => {
-  const { error } = await supabase
+const createCabin = async (newCabinData) => {
+  const { data, error } = await supabase
     .from("cabins")
-    .delete()
-    .eq("id", id);
+    .insert([newCabinData])
+    .select();
+  
+    if (error) {
+      console.error(error.message);
+      throw new Error("Something went wrong... Please try later...");
+    }
+
+    return data;
+};
+
+const deleteCabin = async (id) => {
+  const { error } = await supabase.from("cabins").delete().eq("id", id);
 
   if (error) {
     console.error(error.message);
@@ -25,4 +36,4 @@ const deleteCabin = async (id) => {
   return null;
 };
 
-export { getCabins, deleteCabin };
+export { getCabins, createCabin, deleteCabin };

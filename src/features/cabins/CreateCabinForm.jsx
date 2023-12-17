@@ -2,6 +2,9 @@ import styled, { css } from "styled-components";
 import Input from "../../ui/Input";
 import Button from "../../ui/Button";
 import { useForm } from "react-hook-form";
+import { createCabin } from "../../services/apiCabins";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import toast from "react-hot-toast";
 
 const Form = styled.form`
   ${(props) =>
@@ -92,37 +95,110 @@ const Textarea = styled.textarea`
 `;
 
 const CreateCabinForm = () => {
-  const { register, handleSubmit } = useForm();
+  const queryClient = useQueryClient();
 
-  const onSubmit = data => {
-    console.log(data)
-  };
+  const { register, handleSubmit, reset, getValues, formState } = useForm();
+  const { errors } = formState;
+
+  const { mutate, isLoading: isCreatingCabin } = useMutation({
+    mutationFn: (data) => createCabin(data),
+    onSuccess: () => {
+      toast.success("Cabin was successfully created");
+      queryClient.invalidateQueries({
+        queryKey: ["cabins"],
+      });
+      reset();
+    },
+    onError: (error) => toast.error(error.message),
+  });
+
+  const onSubmit = (data) => mutate(data);
+  const onError = (errors) => console.log(errors);
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit)}>
+    <Form onSubmit={handleSubmit(onSubmit, onError)}>
       <FormRow>
         <Label htmlFor="name">Cabin name</Label>
-        <Input type="text" id="name" {...register("name")} />
+        <Input
+          type="text"
+          id="name"
+          disabled={isCreatingCabin}
+          {...register("name", {
+            required: "This field is required",
+          })}
+        />
+        {errors?.name?.message && <Error>{errors.name.message}</Error>}
       </FormRow>
 
       <FormRow>
         <Label htmlFor="maxCapacity">Maximum capacity</Label>
-        <Input type="number" id="maxCapacity" {...register("maxCapacity")} />
+        <Input
+          type="number"
+          id="maxCapacity"
+          disabled={isCreatingCabin}
+          {...register("maxCapacity", {
+            required: "This field is required",
+            min: {
+              value: 1,
+              message: "Capacity should be at least equal to 1",
+            },
+          })}
+        />
+        {errors?.maxCapacity?.message && (
+          <Error>{errors.maxCapacity.message}</Error>
+        )}
       </FormRow>
 
       <FormRow>
         <Label htmlFor="regularPrice">Regular price</Label>
-        <Input type="number" id="regularPrice" {...register("regularPrice")} />
+        <Input
+          type="number"
+          id="regularPrice"
+          disabled={isCreatingCabin}
+          {...register("regularPrice", {
+            required: "This field is required",
+            min: {
+              value: 1,
+              message: "Regular price should be at least equal to 1",
+            },
+          })}
+        />
+        {errors?.regularPrice?.message && (
+          <Error>{errors.regularPrice.message}</Error>
+        )}
       </FormRow>
 
       <FormRow>
         <Label htmlFor="discount">Discount</Label>
-        <Input type="number" id="discount" defaultValue={0} {...register("discount")} />
+        <Input
+          type="number"
+          id="discount"
+          defaultValue={0}
+          disabled={isCreatingCabin}
+          {...register("discount", {
+            required: "This field is required",
+            validate: (value) =>
+              value <= getValues().regularPrice ||
+              "Discount should be less than regular price",
+          })}
+        />
+        {errors?.discount?.message && <Error>{errors.discount.message}</Error>}
       </FormRow>
 
       <FormRow>
         <Label htmlFor="description">Description for website</Label>
-        <Textarea type="number" id="description" defaultValue="" {...register("description")} />
+        <Textarea
+          type="number"
+          id="description"
+          defaultValue=""
+          disabled={isCreatingCabin}
+          {...register("description", {
+            required: "This field is required",
+          })}
+        />
+        {errors?.description?.message && (
+          <Error>{errors.description.message}</Error>
+        )}
       </FormRow>
 
       <FormRow>
@@ -134,7 +210,7 @@ const CreateCabinForm = () => {
         <Button variation="secondary" type="reset">
           Cancel
         </Button>
-        <Button>Edit cabin</Button>
+        <Button disabled={isCreatingCabin}>Add cabin</Button>
       </FormRow>
     </Form>
   );

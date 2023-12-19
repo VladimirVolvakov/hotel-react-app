@@ -1,12 +1,10 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import toast from "react-hot-toast";
 import { useForm } from "react-hook-form";
 import styled, { css } from "styled-components";
 import Input from "../../ui/Input";
 import Button from "../../ui/Button";
 import FormRow from "../../ui/FormRow";
-import { createCabin } from "../../services/apiCabins";
 import { useCreateCabin } from "./useCreateCabin";
+import { useEditCabin } from "./useEditCabin";
 
 const Form = styled.form`
   ${(props) =>
@@ -62,8 +60,6 @@ const Textarea = styled.textarea`
 
 const CreateCabinForm = ({ editedCabin = {} }) => {
   const { id: editId, ...editValues } = editedCabin;
-  const queryClient = useQueryClient();
-
   const isEditMode = Boolean(editId);
 
   const { register, handleSubmit, reset, getValues, formState } = useForm({
@@ -72,18 +68,7 @@ const CreateCabinForm = ({ editedCabin = {} }) => {
   const { errors } = formState;
 
   const { addCabin, isCreatingCabin } = useCreateCabin();
-
-  const { mutate: editCabin, isLoading: isEditingCabin } = useMutation({
-    mutationFn: ({ newCabinData, id }) => createCabin(newCabinData, id),
-    onSuccess: () => {
-      toast.success("Cabin was successfully edited");
-      queryClient.invalidateQueries({
-        queryKey: ["cabins"],
-      });
-      reset();
-    },
-    onError: (error) => toast.error(error.message),
-  });
+  const { editCabin, isEditingCabin } = useEditCabin();
 
   const isProcessingData = isCreatingCabin || isEditingCabin;
 

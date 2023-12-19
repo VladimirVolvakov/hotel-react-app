@@ -6,6 +6,7 @@ import Input from "../../ui/Input";
 import Button from "../../ui/Button";
 import FormRow from "../../ui/FormRow";
 import { createCabin } from "../../services/apiCabins";
+import { useCreateCabin } from "./useCreateCabin";
 
 const Form = styled.form`
   ${(props) =>
@@ -70,17 +71,7 @@ const CreateCabinForm = ({ editedCabin = {} }) => {
   });
   const { errors } = formState;
 
-  const { mutate: addCabin, isLoading: isCreatingCabin } = useMutation({
-    mutationFn: (data) => createCabin(data),
-    onSuccess: () => {
-      toast.success("Cabin was successfully created");
-      queryClient.invalidateQueries({
-        queryKey: ["cabins"],
-      });
-      reset();
-    },
-    onError: (error) => toast.error(error.message),
-  });
+  const { addCabin, isCreatingCabin } = useCreateCabin();
 
   const { mutate: editCabin, isLoading: isEditingCabin } = useMutation({
     mutationFn: ({ newCabinData, id }) => createCabin(newCabinData, id),
@@ -99,10 +90,22 @@ const CreateCabinForm = ({ editedCabin = {} }) => {
   const onSubmit = (data) => {
     const image = typeof data.image === "string" ? data.image : data.image[0];
 
-    if (isEditMode) editCabin({ newCabinData: { ...data, image }, id: editId });
-    else addCabin({ ...data, image });
+    if (isEditMode)
+      editCabin(
+        { newCabinData: { ...data, image }, id: editId },
+        {
+          onSuccess: () => reset(),
+        }
+      );
+    else
+      addCabin(
+        { ...data, image },
+        {
+          onSuccess: () => reset(),
+        }
+      );
   };
-  
+
   const onError = (errors) => console.log(errors);
 
   return (

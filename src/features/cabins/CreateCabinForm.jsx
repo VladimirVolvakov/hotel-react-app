@@ -39,7 +39,7 @@ const Textarea = styled.textarea`
   height: 8rem;
 `;
 
-const CreateCabinForm = ({ editedCabin = {} }) => {
+const CreateCabinForm = ({ editedCabin = {}, onCloseModal }) => {
   const { id: editId, ...editValues } = editedCabin;
   const isEditMode = Boolean(editId);
 
@@ -60,14 +60,20 @@ const CreateCabinForm = ({ editedCabin = {} }) => {
       editCabin(
         { newCabinData: { ...data, image }, id: editId },
         {
-          onSuccess: () => reset(),
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
         }
       );
     else
       addCabin(
         { ...data, image },
         {
-          onSuccess: () => reset(),
+          onSuccess: () => {
+            reset();
+            onCloseModal?.();
+          },
         }
       );
   };
@@ -75,7 +81,10 @@ const CreateCabinForm = ({ editedCabin = {} }) => {
   const onError = (errors) => console.log(errors);
 
   return (
-    <Form onSubmit={handleSubmit(onSubmit, onError)}>
+    <Form
+      onSubmit={handleSubmit(onSubmit, onError)}
+      type={onCloseModal ? "modal" : "regular"}
+    >
       <FormRow label="Cabin name" error={errors?.name?.message}>
         <Input
           type="text"
@@ -158,7 +167,11 @@ const CreateCabinForm = ({ editedCabin = {} }) => {
       </FormRow>
 
       <FormRow>
-        <Button variation="secondary" type="reset">
+        <Button
+          variation="secondary"
+          type="reset"
+          onClick={() => onCloseModal?.()}
+        >
           Cancel
         </Button>
         <Button disabled={isProcessingData}>

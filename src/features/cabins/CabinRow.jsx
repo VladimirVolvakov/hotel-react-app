@@ -5,6 +5,7 @@ import { formatCurrency } from "../../utils/helpers";
 import { HiDuplicate, HiPencil, HiTrash } from "react-icons/hi";
 import { useCreateCabin } from "./useCreateCabin";
 import Modal from "../../ui/Modal";
+import DeleteConfirmation from "../../ui/DeleteConfirmation";
 
 const TableRow = styled.div`
   display: grid;
@@ -99,12 +100,18 @@ const CabinRow = ({ cabin }) => {
             <CreateCabinForm editedCabin={cabin} />
           </Modal.Window>
 
-          <button
-            onClick={() => deleteCabin(cabinId)}
-            disabled={isCreatingCabin || isDeleting}
-          >
-            <HiTrash />
-          </button>
+          <Modal.Open opensWindowName="delete-cabin">
+            <button>
+              <HiTrash />
+            </button>
+          </Modal.Open>
+          <Modal.Window name="delete-cabin">
+            <DeleteConfirmation
+              resourceName="cabin"
+              onConfirm={() => deleteCabin(cabinId)}
+              disabled={isCreatingCabin || isDeleting}
+            />
+          </Modal.Window>
         </Modal>
       </div>
     </TableRow>

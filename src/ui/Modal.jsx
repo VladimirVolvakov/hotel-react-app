@@ -1,6 +1,7 @@
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 import { useState } from "react";
 import { cloneElement } from "react";
+import { useEffect } from "react";
 import { createContext } from "react";
 import { createPortal } from "react-dom";
 import { HiX } from "react-icons/hi";
@@ -87,11 +88,26 @@ const Window = ({ children, name }) => {
   const { openedWindowName, closeModalWindowHandler } =
     useContext(ModalContext);
 
+  const windowRef = useRef();
+
+  useEffect(() => {
+    const clickHandler = (event) => {
+      if (windowRef.current && !windowRef.current.contains(event.target)) {
+        console.log("Click outside");
+        closeModalWindowHandler();
+      }
+    };
+
+    document.addEventListener("click", clickHandler, true);
+
+    return () => document.removeEventListener("click", clickHandler, true);
+  }, [closeModalWindowHandler]);
+
   if (name !== openedWindowName) return null;
 
   return createPortal(
     <Overlay>
-      <StyledModal>
+      <StyledModal ref={windowRef}>
         <Button onClick={closeModalWindowHandler}>
           <HiX />
         </Button>

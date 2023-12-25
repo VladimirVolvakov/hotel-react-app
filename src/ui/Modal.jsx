@@ -1,7 +1,6 @@
-import { useContext, useRef } from "react";
+import { useContext } from "react";
 import { useState } from "react";
 import { cloneElement } from "react";
-import { useEffect } from "react";
 import { createContext } from "react";
 import { createPortal } from "react-dom";
 import { HiX } from "react-icons/hi";

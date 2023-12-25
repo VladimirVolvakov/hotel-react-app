@@ -6,6 +6,7 @@ import { createContext } from "react";
 import { createPortal } from "react-dom";
 import { HiX } from "react-icons/hi";
 import styled from "styled-components";
+import { useOutsideClick } from "../hooks/useOutsideClick";
 
 const StyledModal = styled.div`
   position: fixed;
@@ -88,20 +89,7 @@ const Window = ({ children, name }) => {
   const { openedWindowName, closeModalWindowHandler } =
     useContext(ModalContext);
 
-  const windowRef = useRef();
-
-  useEffect(() => {
-    const clickHandler = (event) => {
-      if (windowRef.current && !windowRef.current.contains(event.target)) {
-        console.log("Click outside");
-        closeModalWindowHandler();
-      }
-    };
-
-    document.addEventListener("click", clickHandler, true);
-
-    return () => document.removeEventListener("click", clickHandler, true);
-  }, [closeModalWindowHandler]);
+  const windowRef = useOutsideClick(closeModalWindowHandler);
 
   if (name !== openedWindowName) return null;
 

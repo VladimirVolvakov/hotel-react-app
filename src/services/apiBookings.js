@@ -5,9 +5,14 @@ export const getBookings = async ({ filter, sortBy }) => {
     .from("bookings")
     .select("*, cabins(name), guests(fullName, email)");
 
-  if (filter !== null) {
+  if (filter) {
     const { field, value, method } = filter;
     query = query[method || "eq"](field, value);
+  }
+
+  if (sortBy) {
+    const { field, direction } = sortBy;
+    query = query.order(field, { ascending: direction === "asc" });
   }
 
   const { data: bookings, error } = await query;

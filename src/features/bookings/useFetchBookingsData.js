@@ -14,9 +14,13 @@ export const useFetchBookingsData = () => {
           value: filterValue,
         };
 
+  const sortByValue = searchParams.get("sortBy") || "startDate-desc";
+  const [field, direction] = sortByValue.split("-");
+  const sortBy = { field, direction };
+
   const res = useQuery({
-    queryKey: ["bookings", filter],
-    queryFn: () => getBookings({ filter }),
+    queryKey: ["bookings", filter, sortBy],
+    queryFn: () => getBookings({ filter, sortBy }),
   });
 
   const { data: bookings, isLoading, error } = res;

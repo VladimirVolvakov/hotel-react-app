@@ -18,12 +18,16 @@ export const useFetchBookingsData = () => {
   const [field, direction] = sortByValue.split("-");
   const sortBy = { field, direction };
 
+  const currentPageNum = !searchParams.get("page")
+    ? 1
+    : +searchParams.get("page");
+
   const res = useQuery({
-    queryKey: ["bookings", filter, sortBy],
-    queryFn: () => getBookings({ filter, sortBy }),
+    queryKey: ["bookings", filter, sortBy, currentPageNum],
+    queryFn: () => getBookings({ filter, sortBy, currentPageNum }),
   });
 
-  const { data: bookings, isLoading, error } = res;
+  const { data: { bookings, count } = {}, isLoading, error } = res;
 
-  return { bookings, isLoading, error };
+  return { bookings, count, isLoading, error };
 };

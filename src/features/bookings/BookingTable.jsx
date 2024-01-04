@@ -7,11 +7,11 @@ import { useFetchBookingsData } from "./useFetchBookingsData";
 import Pagination from "../../ui/Pagination";
 
 function BookingTable() {
-  const { bookings, isLoading, error } = useFetchBookingsData();
+  const { bookings, count, isLoading, error } = useFetchBookingsData();
 
   if (isLoading) return <Spinner />;
 
-  if (!bookings.length) return <Empty resource="bookings" />;
+  if (!bookings?.length) return <Empty resource="bookings" />;
 
   return (
     <Menus>
@@ -33,7 +33,7 @@ function BookingTable() {
         />
 
         <Table.Footer>
-          <Pagination resultsQty={5} />
+          <Pagination resultsQty={count} />
         </Table.Footer>
       </Table>
     </Menus>

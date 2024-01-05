@@ -1,59 +1,50 @@
 import styled from "styled-components";
-import BookingDataBox from "./BookingDataBox";
+import BookingDataBox from "../../features/bookings/BookingDataBox";
 import Row from "../../ui/Row";
 import Heading from "../../ui/Heading";
-import Tag from "../../ui/Tag";
 import ButtonGroup from "../../ui/ButtonGroup";
 import Button from "../../ui/Button";
 import ButtonText from "../../ui/ButtonText";
-import { useFetchBooking } from "./useFetchBooking";
 import Spinner from "../../ui/Spinner";
 import { useNavigate } from "react-router-dom";
+import { useFetchBooking } from "../bookings/useFetchBooking";
 
-const HeadingGroup = styled.div`
-  display: flex;
-  gap: 2.4rem;
-  align-items: center;
-`;
-
-const BookingDetail = () => {
+function CheckinBooking() {
   const { booking = {}, isLoading, error } = useFetchBooking();
-  const { id: bookingId, status } = booking;
 
   const navigate = useNavigate();
   const navigatePrevPage = () => navigate(-1);
-  const navigateCheckIn = () => navigate(`/checkin/${bookingId}`);
 
-  const statusToTagName = {
-    "unconfirmed": "blue",
-    "checked-in": "green",
-    "checked-out": "silver",
-  };
+  const {
+    id: bookingId,
+    guests,
+    totalPrice,
+    numGuests,
+    hasBreakfast,
+    numNights,
+  } = booking;
+
+  const checkInHandler = () => {};
 
   if (isLoading) return <Spinner />;
 
   return (
     <>
       <Row type="horizontal">
-        <HeadingGroup>
-          <Heading as="h1">Booking #{bookingId}</Heading>
-          <Tag type={statusToTagName[status]}>{status.replace("-", " ")}</Tag>
-        </HeadingGroup>
+        <Heading as="h1">Check in booking #{bookingId}</Heading>
         <ButtonText onClick={navigatePrevPage}>&larr; Back</ButtonText>
       </Row>
 
       <BookingDataBox booking={booking} />
 
       <ButtonGroup>
-        {status === "unconfirmed" && (
-          <Button onClick={navigateCheckIn}>Check In</Button>
-        )}
+        <Button onClick={checkInHandler}>Check in booking #{bookingId}</Button>
         <Button variation="secondary" onClick={navigatePrevPage}>
           Back
         </Button>
       </ButtonGroup>
     </>
   );
-};
+}
 
-export default BookingDetail;
+export default CheckinBooking;

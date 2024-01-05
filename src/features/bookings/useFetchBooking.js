@@ -6,7 +6,7 @@ export const useFetchBooking = () => {
   const { bookingId } = useParams();
 
   const res = useQuery({
-    queryKey: ["bookings"],
+    queryKey: ["bookings", bookingId],
     queryFn: () => getBooking(bookingId),
   });
 

@@ -8,13 +8,23 @@ import ButtonText from "../../ui/ButtonText";
 import Spinner from "../../ui/Spinner";
 import { useNavigate } from "react-router-dom";
 import { useFetchBooking } from "../bookings/useFetchBooking";
+import { useState } from "react";
+import Checkbox from "../../ui/Checkbox";
+import { useEffect } from "react";
+import { formatCurrency } from "../../utils/helpers";
+import { useCheckin } from "./useCheckin";
+
+const Box = styled.div`
+  background-color: var(--color-grey-0);
+  border: 1px solid var(--color-grey-100);
+  border-radius: var(--border-radius-md);
+  padding: 2.4rem 4rem;
+`;
 
 function CheckinBooking() {
+  const [confirmPayment, setConfirmPayment] = useState(false);
+
   const { booking = {}, isLoading, error } = useFetchBooking();
-
-  const navigate = useNavigate();
-  const navigatePrevPage = () => navigate(-1);
-
   const {
     id: bookingId,
     guests,
@@ -24,9 +34,20 @@ function CheckinBooking() {
     numNights,
   } = booking;
 
-  const checkInHandler = () => {};
+  useEffect(() => setConfirmPayment(booking?.isPaid ?? false), [booking]);
 
-  if (isLoading) return <Spinner />;
+  const navigate = useNavigate();
+  const navigatePrevPage = () => navigate(-1);
+
+  const { checkin, isCheckinIn } = useCheckin();
+
+  const checkInHandler = () => {
+    if (!confirmPayment) return;
+
+    checkin(bookingId);
+  };
+
+  if (isLoading || isCheckinIn) return <Spinner />;
 
   return (
     <>
@@ -37,8 +58,25 @@ function CheckinBooking() {
 
       <BookingDataBox booking={booking} />
 
+      <Box>
+        <Checkbox
+          id="confirm"
+          checked={confirmPayment}
+          disabled={confirmPayment || isCheckinIn}
+          onChange={() => setConfirmPayment((curState) => !curState)}
+        >
+          I confirm that {guests.fullName} has paid the total amount of{" "}
+          {formatCurrency(totalPrice)}
+        </Checkbox>
+      </Box>
+
       <ButtonGroup>
-        <Button onClick={checkInHandler}>Check in booking #{bookingId}</Button>
+        <Button
+          onClick={checkInHandler}
+          disabled={!confirmPayment || isCheckinIn}
+        >
+          Check in booking #{bookingId}
+        </Button>
         <Button variation="secondary" onClick={navigatePrevPage}>
           Back
         </Button>

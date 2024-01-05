@@ -48,3 +48,19 @@ export const getBooking = async (id) => {
 
   return booking;
 };
+
+export const updateBooking = async (id, object) => {
+  const { data, error } = await supabase
+    .from("bookings")
+    .update(object)
+    .eq("id", id)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error.message);
+    throw new Error("Cannot get this booking data... Please try later...");
+  }
+
+  return data;
+};

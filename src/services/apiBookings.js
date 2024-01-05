@@ -24,11 +24,7 @@ export const getBookings = async ({ filter, sortBy, currentPageNum }) => {
     query = query.range(startIndex, finalIndex);
   }
 
-  const {
-    data: bookings,
-    error,
-    count
-  } = await query;
+  const { data: bookings, error, count } = await query;
 
   if (error) {
     console.error(error.message);
@@ -36,4 +32,19 @@ export const getBookings = async ({ filter, sortBy, currentPageNum }) => {
   }
 
   return { bookings, count };
+};
+
+export const getBooking = async (id) => {
+  let { data: booking, error } = await supabase
+    .from("bookings")
+    .select("*, cabins(*), guests(*)")
+    .eq("id", id)
+    .single();
+
+  if (error) {
+    console.error(error.message);
+    throw new Error("Cannot get this booking data... Please try later...");
+  }
+
+  return booking;
 };

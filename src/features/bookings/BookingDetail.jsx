@@ -10,6 +10,7 @@ import { useFetchBooking } from "./useFetchBooking";
 import Spinner from "../../ui/Spinner";
 import { useNavigate } from "react-router-dom";
 import { useCheckout } from "../check/useCheckout";
+import { useDeleteBooking } from "./useDeleteBooking";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -22,10 +23,16 @@ const BookingDetail = () => {
   const { id: bookingId, status } = booking;
 
   const { checkout, isCheckingOut } = useCheckout();
+  const { deleteBooking, isDeletingBooking } = useDeleteBooking();
 
   const navigate = useNavigate();
   const navigatePrevPage = () => navigate(-1);
   const navigateCheckIn = () => navigate(`/checkin/${bookingId}`);
+
+  const deleteBookingHandler = () => {
+    deleteBooking(bookingId);
+    navigatePrevPage();
+  };
 
   const statusToTagName = {
     "unconfirmed": "blue",
@@ -53,13 +60,18 @@ const BookingDetail = () => {
         )}
 
         {status === "checked-in" && (
-          <Button
-            onClick={() => checkout(bookingId)}
-            disabled={isCheckingOut}
-          >
+          <Button onClick={() => checkout(bookingId)} disabled={isCheckingOut}>
             Check Out
           </Button>
         )}
+
+        <Button
+          variation="danger"
+          onClick={deleteBookingHandler}
+          disabled={isDeletingBooking}
+        >
+          Delete booking #{bookingId}
+        </Button>
 
         <Button variation="secondary" onClick={navigatePrevPage}>
           Back

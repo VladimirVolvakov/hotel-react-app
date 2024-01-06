@@ -4,9 +4,15 @@ import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
 import { formatCurrency } from "../../utils/helpers";
 import { formatDistanceFromNow } from "../../utils/helpers";
-import { HiArrowDownOnSquare, HiArrowUpOnSquare, HiEye } from "react-icons/hi2";
+import {
+  HiArrowDownOnSquare,
+  HiArrowUpOnSquare,
+  HiEye,
+  HiXMark,
+} from "react-icons/hi2";
 import { useNavigate } from "react-router-dom";
 import { useCheckout } from "../check/useCheckout";
+import { useDeleteBooking } from "./useDeleteBooking";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -61,13 +67,14 @@ const BookingRow = ({
   },
 }) => {
   const statusToTagName = {
-    "unconfirmed": "blue",
+    unconfirmed: "blue",
     "checked-in": "green",
     "checked-out": "silver",
   };
 
   const navigate = useNavigate();
   const { checkout, isCheckingOut } = useCheckout();
+  const { deleteBooking, isDeletingBooking } = useDeleteBooking();
 
   return (
     <Table.Row>
@@ -121,6 +128,13 @@ const BookingRow = ({
               Check Out
             </Menus.Button>
           )}
+          <Menus.Button
+            icon={<HiXMark />}
+            onClick={() => deleteBooking(bookingId)}
+            disabled={isDeletingBooking}
+          >
+            Delete
+          </Menus.Button>
         </Menus.List>
       </Menus.Menu>
     </Table.Row>

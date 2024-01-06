@@ -14,6 +14,7 @@ import { useEffect } from "react";
 import { formatCurrency } from "../../utils/helpers";
 import { useCheckin } from "./useCheckin";
 import { useFetchSettings } from "../settings/useFetchSettings";
+import { useDeleteBooking } from "../bookings/useDeleteBooking";
 
 const Box = styled.div`
   background-color: var(--color-grey-0);
@@ -35,6 +36,8 @@ function CheckinBooking() {
     hasBreakfast,
     numNights,
   } = booking;
+
+  const { deleteBooking, isDeletingBooking } = useDeleteBooking();
 
   const { settings, isLoading: isLoadingSettings } = useFetchSettings();
   const totalBreakfastPrice = settings?.breakfastPrice * numGuests * numNights;
@@ -63,7 +66,13 @@ function CheckinBooking() {
     }
   };
 
-  if (isLoading || isCheckinIn || isLoadingSettings) return <Spinner />;
+  const deleteBookingHandler = () => {
+    deleteBooking(bookingId);
+    navigatePrevPage();
+  };
+
+  if (isLoading || isCheckinIn || isLoadingSettings || isDeletingBooking)
+    return <Spinner />;
 
   return (
     <>
@@ -108,6 +117,13 @@ function CheckinBooking() {
       </Box>
 
       <ButtonGroup>
+        <Button
+          variation="danger"
+          onClick={deleteBookingHandler}
+          disabled={isDeletingBooking || isCheckinIn}
+        >
+          Delete booking #{bookingId}
+        </Button>
         <Button
           onClick={checkInHandler}
           disabled={!confirmPayment || isCheckinIn}

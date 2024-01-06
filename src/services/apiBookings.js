@@ -64,3 +64,14 @@ export const updateBooking = async (id, object) => {
 
   return data;
 };
+
+export const deleteBooking = async (id) => {
+  const { error } = await supabase.from("bookings").delete().eq("id", id);
+
+  if (error) {
+    console.error(error.message);
+    throw new Error("Cannot delete this booking... Please try later...");
+  }
+
+  return null;
+};

@@ -9,6 +9,7 @@ import ButtonText from "../../ui/ButtonText";
 import { useFetchBooking } from "./useFetchBooking";
 import Spinner from "../../ui/Spinner";
 import { useNavigate } from "react-router-dom";
+import { useCheckout } from "../check/useCheckout";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -19,6 +20,8 @@ const HeadingGroup = styled.div`
 const BookingDetail = () => {
   const { booking = {}, isLoading, error } = useFetchBooking();
   const { id: bookingId, status } = booking;
+
+  const { checkout, isCheckingOut } = useCheckout();
 
   const navigate = useNavigate();
   const navigatePrevPage = () => navigate(-1);
@@ -48,6 +51,16 @@ const BookingDetail = () => {
         {status === "unconfirmed" && (
           <Button onClick={navigateCheckIn}>Check In</Button>
         )}
+
+        {status === "checked-in" && (
+          <Button
+            onClick={() => checkout(bookingId)}
+            disabled={isCheckingOut}
+          >
+            Check Out
+          </Button>
+        )}
+
         <Button variation="secondary" onClick={navigatePrevPage}>
           Back
         </Button>

@@ -1,7 +1,10 @@
 import styled from "styled-components";
-import { format, isToday } from "date-fns";
+import { useNavigate } from "react-router-dom";
+import { useCheckout } from "../check/useCheckout";
+import { useDeleteBooking } from "./useDeleteBooking";
 import Table from "../../ui/Table";
 import Menus from "../../ui/Menus";
+import { format, isToday } from "date-fns";
 import { formatCurrency } from "../../utils/helpers";
 import { formatDistanceFromNow } from "../../utils/helpers";
 import {
@@ -10,9 +13,6 @@ import {
   HiEye,
   HiXMark,
 } from "react-icons/hi2";
-import { useNavigate } from "react-router-dom";
-import { useCheckout } from "../check/useCheckout";
-import { useDeleteBooking } from "./useDeleteBooking";
 
 const Cabin = styled.div`
   font-size: 1.6rem;
@@ -67,7 +67,7 @@ const BookingRow = ({
   },
 }) => {
   const statusToTagName = {
-    unconfirmed: "blue",
+    "unconfirmed": "blue",
     "checked-in": "green",
     "checked-out": "silver",
   };

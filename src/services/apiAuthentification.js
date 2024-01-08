@@ -21,12 +21,19 @@ export const getAuthenticatedUser = async () => {
 
   const { data, error } = await supabase.auth.getUser();
 
-  console.log(data);
-
   if (error) {
     console.error(error.message);
     throw new Error(error.message);
   }
 
   return data?.user;
+};
+
+export const userLogOut = async () => {
+  const { error } = await supabase.auth.signOut();
+
+  if (error) {
+    console.error(error.message);
+    throw new Error(error.message);
+  }
 };

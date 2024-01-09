@@ -14,16 +14,12 @@ const FullPage = styled.div`
 
 const ProtectedRoute = ({ children }) => {
   const navigate = useNavigate();
-
-  // 1. Загрузить аутентифицированного пользователя:
   const { isLoading, isAuthentificated } = useFetchUser();
 
-  // 2. Если пользователь не аутентифицирован, переадресовать его на страницу аутентификации:
   useEffect(() => {
     if (!isAuthentificated && !isLoading) navigate("/login");
-  }, [isAuthentificated, isLoading]);
+  }, [isAuthentificated, navigate, isLoading]);
 
-  // 3. Во время загрузки показать пользователю спиннер:
   if (isLoading)
     return (
       <FullPage>
@@ -31,7 +27,6 @@ const ProtectedRoute = ({ children }) => {
       </FullPage>
     );
 
-  // 4. Если пользователь аутентифицирован, отобразить приложение:
   if (isAuthentificated) return children;
 };
 

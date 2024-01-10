@@ -3,14 +3,25 @@ import Button from "../../ui/Button";
 import Form from "../../ui/Form";
 import FormRow from "../../ui/FormRow";
 import Input from "../../ui/Input";
+import Spinner from "../../ui/Spinner";
+import { useSignup } from "./useSignup";
 
 function SignupForm() {
-  const { register, formState, getValues, handleSubmit } = useForm();
+  const { register, formState, getValues, handleSubmit, reset } = useForm();
   const { errors } = formState;
-  
-  const onSubmit = (data) => {
-    console.log(data);
+
+  const { signUp, isSigningUp } = useSignup();
+
+  const onSubmit = ({ fullName, email, password }) => {
+    signUp(
+      { fullName, email, password },
+      {
+        onSettled: () => reset(),
+      }
+    );
   };
+
+  if (isSigningUp) return <Spinner />;
 
   return (
     <Form onSubmit={handleSubmit(onSubmit)}>
@@ -19,6 +30,7 @@ function SignupForm() {
           type="text"
           id="fullName"
           {...register("fullName", { required: "This field is required" })}
+          disabled={isSigningUp}
         />
       </FormRow>
 
@@ -33,6 +45,7 @@ function SignupForm() {
               message: "Invalid email",
             },
           })}
+          disabled={isSigningUp}
         />
       </FormRow>
 
@@ -50,6 +63,7 @@ function SignupForm() {
               message: "Password should contain at least 8 characters",
             },
           })}
+          disabled={isSigningUp}
         />
       </FormRow>
 
@@ -62,6 +76,7 @@ function SignupForm() {
             validate: (value) =>
               value === getValues().password || "Passwords should match",
           })}
+          disabled={isSigningUp}
         />
       </FormRow>
 

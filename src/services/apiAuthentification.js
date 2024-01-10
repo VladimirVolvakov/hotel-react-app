@@ -37,3 +37,23 @@ export const userLogOut = async () => {
     throw new Error(error.message);
   }
 };
+
+export const signUpUser = async ({ fullName, email, password }) => {
+  const { data, error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: {
+        fullName,
+        avatar: "",
+      },
+    },
+  });
+
+  if (error) {
+    console.error(error.message);
+    throw new Error(error.message);
+  }
+
+  return data;
+};

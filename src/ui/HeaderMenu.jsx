@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import Logout from "../features/authentification/Logout";
 import ButtonIcon from "./ButtonIcon";
+import ModeToggler from "./ModeToggler";
 
 const StyledHeaderMenu = styled.ul`
   display: flex;
@@ -13,14 +14,14 @@ const StyledHeaderMenu = styled.ul`
 const HeaderMenu = () => {
   const navigate = useNavigate();
   return (
-    <StyledHeaderMenu>
-      <li></li>
-      <li></li>
-      <li></li>
+    <StyledHeaderMenu>     
       <li>
         <ButtonIcon onClick={() => navigate("/account")}>
           <HiOutlineUser />
         </ButtonIcon>
+      </li>
+      <li>
+        <ModeToggler />
       </li>
       <li>
         <Logout />

@@ -1,4 +1,5 @@
 import { QTY_PER_PAGE } from "../utils/constants";
+import { getToday } from "../utils/helpers";
 import supabase from "./supabase";
 
 export const getBookings = async ({ filter, sortBy, currentPageNum }) => {
@@ -74,4 +75,38 @@ export const deleteBooking = async (id) => {
   }
 
   return null;
+};
+
+// FUNCTIONS THAT ARE USED FOR DASHBOARD PAGE
+
+// Returns all bookings that were created after date (ISO string) in input:
+export const getBookingsAfterDate = async (date) => {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("created_at, totalPrice, extrasPrice")
+    .gte("created_at", date)
+    .lte("created_at", getToday({ end: true }));
+
+  if (error) {
+    console.error(error.message);
+    throw new Error("Can not load bookings... Please try later...");
+  }
+
+  return data;
+};
+
+// Returns all bookings that were created after date (ISO string) in input:
+export const getStaysAfterDate = async (date) => {
+  const { data, error } = await supabase
+    .from("bookings")
+    .select("*, guests(fullName)")
+    .gte("startDate", date)
+    .lte("startDate", getToday());
+
+  if (error) {
+    console.error(error.message);
+    throw new Error("Can not load bookings... Please try later...");
+  }
+
+  return data;
 };

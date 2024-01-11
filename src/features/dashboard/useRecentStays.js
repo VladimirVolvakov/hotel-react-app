@@ -16,5 +16,5 @@ export const useRecentStays = () => {
 
   const confirmedStays = stays?.filter((stay) => stay.status !== "unconfirmed");
 
-  return { stays, confirmedStays, isLoadingStays };
+  return { stays, confirmedStays, isLoadingStays, daysQty };
 };

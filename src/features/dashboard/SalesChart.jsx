@@ -59,7 +59,10 @@ const SalesChart = ({ bookings, daysQty }) => {
 
   return (
     <StyledSalesChart>
-      <Heading as="h2">Sales</Heading>
+      <Heading as="h2">
+        Sales from {format(datesToShowStats.at(0), "MMM dd yyyy")} to{" "}
+        {format(datesToShowStats.at(-1), "MMM dd yyyy")}
+      </Heading>
       <ResponsiveContainer height={300} width="100%">
         <AreaChart data={data}>
           <XAxis

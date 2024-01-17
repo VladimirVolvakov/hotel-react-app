@@ -1,16 +1,17 @@
 import styled from "styled-components";
 import BookingDataBox from "./BookingDataBox";
-import Row from "../../ui/Row";
-import Heading from "../../ui/Heading";
-import Tag from "../../ui/Tag";
-import ButtonGroup from "../../ui/ButtonGroup";
 import Button from "../../ui/Button";
+import ButtonGroup from "../../ui/ButtonGroup";
 import ButtonText from "../../ui/ButtonText";
-import { useFetchBooking } from "./useFetchBooking";
+import Empty from "../../ui/Empty";
+import Heading from "../../ui/Heading";
+import Row from "../../ui/Row";
 import Spinner from "../../ui/Spinner";
-import { useNavigate } from "react-router-dom";
+import Tag from "../../ui/Tag";
 import { useCheckout } from "../check/useCheckout";
 import { useDeleteBooking } from "./useDeleteBooking";
+import { useFetchBooking } from "./useFetchBooking";
+import { useNavigate } from "react-router-dom";
 
 const HeadingGroup = styled.div`
   display: flex;
@@ -41,6 +42,8 @@ const BookingDetail = () => {
   };
 
   if (isLoading) return <Spinner />;
+
+  if (!booking) return <Empty resource="booking" />;
 
   return (
     <>

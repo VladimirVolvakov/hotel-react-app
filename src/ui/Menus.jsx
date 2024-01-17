@@ -99,6 +99,8 @@ const Toggle = ({ id }) => {
   } = useContext(MenusContext);
 
   const clickHandler = (event) => {
+    event.stopPropagation();
+
     const rect = event.target.closest("button").getBoundingClientRect();
     setContextMenuPosition({
       x: window.innerWidth - rect.width - rect.x,
@@ -121,7 +123,7 @@ const List = ({ children, id }) => {
   const { openedCabinId, contextMenuPosition, closeMenuHandler } =
     useContext(MenusContext);
 
-  const ref = useOutsideClick(closeMenuHandler);
+  const ref = useOutsideClick(closeMenuHandler, false);
 
   if (openedCabinId !== id) return null;
 
